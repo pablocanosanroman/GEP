@@ -8,13 +8,13 @@ public class Pickup : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if(other.transform.root.CompareTag("Player"))
+        if (other.transform.root.CompareTag("Player"))
         {
-            if(other.transform.root.GetComponent<Char_Weapon_Controller>().EquipWeapon(m_WeaponType))
+            if (other.transform.root.GetComponent<Char_Weapon_Controller>().EquipWeapon(m_WeaponType))
             {
                 Destroy(gameObject);
             }
-        }    
+        }
     }
 }
 

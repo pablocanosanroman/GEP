@@ -7,7 +7,7 @@ using UnityEngine;
 public class Char_Phys : MonoBehaviour
 {
     private float m_Speed = 1f;
-    private float m_StopingForce = 1f;
+    private float m_MaxSpeed = 5f;
     private float m_RotationSpeed;
     private float m_JumpForce = 7f;
     
@@ -20,10 +20,15 @@ public class Char_Phys : MonoBehaviour
     /// The attached Rigidbody
     /// </summary>
     private Rigidbody m_RB;
+    private Animator m_PlayerAnimator;
+    
     private void Awake()
     {
         //Gets the attached rigidbody component
         m_RB = GetComponent<Rigidbody>();
+
+        m_PlayerAnimator = GetComponent<Animator>();
+        
     }
 
 
@@ -54,31 +59,23 @@ public class Char_Phys : MonoBehaviour
         if(m_RB.velocity.y == 0)
         {
             m_RB.AddForce(jumpDirection * m_JumpForce, ForceMode.Impulse);
+            
         }
 
-
-
-        //else
-        //{
-        //    if (moveDir.normalized.magnitude == 0)
-        //    {
-        //        IsMoving = false;
-        //    }
-        //}
-
-
-        //if (!IsMoving)
-        //{
-        //    m_RB.AddForce(-(moveDir.normalized * m_StopingForce * Time.deltaTime), ForceMode.Impulse);
-
-        //    IsMoving = true;
-        //}
-
-
-
+        //Velocity Cap
+        if(m_RB.velocity.x > 10f || m_RB.velocity.x < -10f)
+        {
+            m_RB.AddForce(-(moveDir.normalized * m_Speed), ForceMode.Impulse);
+        }
+        else if(m_RB.velocity.z > 10f || m_RB.velocity.z < -10f)
+        {
+            m_RB.AddForce(-(moveDir.normalized * m_Speed), ForceMode.Impulse);
+        }
+       
 
     }
 
     
+
 
 }
