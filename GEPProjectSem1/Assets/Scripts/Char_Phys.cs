@@ -15,6 +15,7 @@ public class Char_Phys : MonoBehaviour
     private float m_MaxSpeed = 5f;
     private float m_RotationSpeed;
     private float m_JumpForce = 7f;
+    
 
     /// <summary>
     /// The attached Rigidbody
@@ -61,7 +62,11 @@ public class Char_Phys : MonoBehaviour
              //Add force to the rigidbody
             m_RB.AddForce(moveDir.normalized * m_Speed, ForceMode.Impulse);
 
-            m_Player.GetComponent<AnimationController>().ChangeAnimationState(m_PlayerState = PlayerState.RUN);
+            if(m_RB.velocity.y == 0f)
+            {
+                m_Player.GetComponent<AnimationController>().ChangeAnimationState(m_PlayerState = PlayerState.RUN);
+            }
+            
            
         }
         
@@ -121,6 +126,7 @@ public class Char_Phys : MonoBehaviour
 
     //}
 
+    
 
 
 }

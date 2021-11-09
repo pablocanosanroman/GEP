@@ -4,42 +4,38 @@ using UnityEngine;
 
 public class Char_Weapon_Controller : MonoBehaviour
 {
-    WeaponType m_EquipedWeapon;
+    public WeaponType m_EquipedWeapon;
     public Transform[] m_Weapons;
     public GameObject[] m_PickupPrefabs;
-   
+    private Pickup m_InteractObject;
 
 
 
     private void Start()
     {
-        
-
         m_EquipedWeapon = WeaponType.NONE;
-
-
+        
     }
 
-    
 
-    //private void Update()
-    //{
-    //    if(Input.GetKeyDown(KeyCode.E))
-    //    {
-    //        if(m_EquipedWeapon != weaponType.GetComponent<Pickup>().m_WeaponType)
-    //        {
-    //            if (m_EquipedWeapon != WeaponType.NONE)
-    //            {
-    //                StartCoroutine(DropEquipedWeapon((new Vector3(transform.position.x, (transform.position.y + 1), transform.position.z)), m_EquipedWeapon));
-    //                m_Weapons[(int)m_EquipedWeapon].gameObject.SetActive(false);
-    //            }
-    //        }
 
-    //        m_EquipedWeapon = weaponType.GetComponent<Pickup>().m_WeaponType;
-    //        m_Weapons[(int)m_EquipedWeapon].gameObject.SetActive(true);
+    private void Update()
+    {
 
-    //    }
-    //}
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            if(m_InteractObject != null)
+            {
+                if (EquipWeapon(m_InteractObject.m_WeaponType))
+                {
+                    Destroy(m_InteractObject.gameObject);
+                    m_InteractObject = null;
+
+                }
+            }
+
+        }
+    }
 
     public bool EquipWeapon(WeaponType weaponType)
     {
@@ -62,6 +58,17 @@ public class Char_Weapon_Controller : MonoBehaviour
         return false;
         
         
+
+    }
+
+    public void UpdateInteractObject(Pickup obj)
+    {
+        m_InteractObject = obj;
+
+        if (m_InteractObject == null)
+        {
+            m_InteractObject = obj;
+        }
 
     }
 
