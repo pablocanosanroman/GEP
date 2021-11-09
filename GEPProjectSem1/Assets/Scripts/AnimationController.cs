@@ -4,15 +4,25 @@ using UnityEngine;
 
 public class AnimationController : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    public Animator m_CharacterAnimator;
+    PlayerState m_currentAnimation;
+
+    private void Start()
     {
-        
+        m_CharacterAnimator = GetComponent<Animator>();
+
     }
 
-    // Update is called once per frame
-    void Update()
+    public void ChangeAnimationState(PlayerState newState)
     {
-        
+        //stop the same animation from interrupting itself --Guard
+        if(m_currentAnimation == newState) return;
+
+        //Play animation
+        m_CharacterAnimator.Play(newState.ToString());
+
+        //reassingn the current state
+        m_currentAnimation = newState;
     }
+
 }

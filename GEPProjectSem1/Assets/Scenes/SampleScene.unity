@@ -650,6 +650,7 @@ GameObject:
   - component: {fileID: 499831651}
   - component: {fileID: 499831655}
   - component: {fileID: 499831656}
+  - component: {fileID: 499831657}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -685,6 +686,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_TurnSmoothTime: 0.07
   cam: {fileID: 1687258585}
+  m_PlayerState: 0
 --- !u!54 &499831653
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -760,6 +762,19 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &499831657
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 499831650}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f89b6ad8a067a96408833dec0cf3c120, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_CharacterAnimator: {fileID: 0}
 --- !u!1001 &546906072
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2476,7 +2491,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8654250720420973338, guid: 34115fd4eff069845a47d22ce756724e, type: 3}
       propertyPath: m_TagString
-      value: Player
+      value: Untagged
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 8654250720411597152, guid: 34115fd4eff069845a47d22ce756724e, type: 3}
