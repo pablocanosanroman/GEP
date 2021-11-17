@@ -12,34 +12,40 @@ public class Char_Phys : MonoBehaviour
     [SerializeField] private Transform cam; //Reference to our camera
 
     private float m_Speed = 1f;
-    private float m_MaxSpeed = 5f;
+    private float m_StopingForce = 10f;
+    private float m_MaxSpeed = 8f;
     private float m_RotationSpeed;
-    private float m_JumpForce = 7f;
+    private float m_JumpForce = 10f;
+    private bool m_IsGrounded;
+    private bool m_IsAttacking = false;
     
 
     /// <summary>
     /// The attached Rigidbody
     /// </summary>
     private Rigidbody m_RB;
+
     public PlayerState m_PlayerState;
-    private GameObject m_Player;
-    //private float AnimDelay;
-
-
-    //private void Start()
-    //{
-    //    AnimDelay = m_Player.GetComponent<AnimationController>().m_CharacterAnimator.GetCurrentAnimatorStateInfo(0).length;
-    //}
+    private Animator m_Animator;
+    private AnimationController m_PlayerAnimationController;
+    private Char_Weapon_Controller m_Character_Weapon_Controller;
+    
+    
 
     private void Awake()
     {
         //Gets the attached rigidbody component
         m_RB = GetComponent<Rigidbody>();
 
-        m_Player = GameObject.FindGameObjectWithTag("Player");
-
         m_PlayerState = PlayerState.IDLE;
 
+        m_Animator = GetComponent<Animator>();
+
+        m_PlayerAnimationController = GetComponent<AnimationController>();
+
+        m_Character_Weapon_Controller = GetComponent<Char_Weapon_Controller>();
+
+        
     }
 
 
@@ -62,72 +68,91 @@ public class Char_Phys : MonoBehaviour
              //Add force to the rigidbody
             m_RB.AddForce(moveDir.normalized * m_Speed, ForceMode.Impulse);
 
-            if(m_RB.velocity.y == 0f)
+            if(m_RB.velocity.y == 0f )
             {
-                m_Player.GetComponent<AnimationController>().ChangeAnimationState(m_PlayerState = PlayerState.RUN);
+                m_PlayerAnimationController.ChangeAnimationState(m_PlayerState = PlayerState.RUN);
             }
+
             
-           
-        }
-        
-        if(m_RB.velocity == Vector3.zero)
-        {
-            m_Player.GetComponent<AnimationController>().ChangeAnimationState(m_PlayerState = PlayerState.IDLE);
-            //if(AnimDelay == 0)
-            //{
-            //    m_Player.GetComponent<AnimationController>().ChangeAnimationState(m_PlayerState = PlayerState.IDLE2);
-            //    if(AnimDelay == 0)
-            //    {
-            //        m_Player.GetComponent<AnimationController>().ChangeAnimationState(m_PlayerState = PlayerState.IDLE3);
-                    
-            //        if (AnimDelay == 0)
-            //        {
-            //            m_Player.GetComponent<AnimationController>().ChangeAnimationState(m_PlayerState = PlayerState.IDLE4);
-            //        }
-            //    }
-            //}
 
         }
-        
+        else 
+        {
+            Vector3 lateralVel = Vector3.ProjectOnPlane(m_RB.velocity, Vector3.up);
+            if (lateralVel.magnitude > 0.1f)
+            {
+                
+                m_RB.AddForce(-(lateralVel.normalized * m_StopingForce * Time.fixedDeltaTime), ForceMode.Impulse);
+                
+            }
+            else
+            {
+                m_RB.velocity = m_RB.velocity.y * Vector3.up;
+            }
+
+        }
+
+        m_Animator.SetFloat("RunSpeed", m_RB.velocity.magnitude / m_MaxSpeed);
+
+        if (m_RB.velocity == Vector3.zero && !m_IsAttacking)
+        {
+            m_PlayerAnimationController.ChangeAnimationState(m_PlayerState = PlayerState.IDLE);
+        }
+
 
         //Jumping system
-        Vector3 jumpDirection = new Vector3(0f, Input.GetAxisRaw("Jump"), 0f).normalized;
-
-        if(m_RB.velocity.y == 0)
+        
+        if(IsGrounded() && Input.GetButtonDown("Jump"))
         {
-            m_RB.AddForce(jumpDirection * m_JumpForce, ForceMode.Impulse);
             
-        }
-        else if (m_RB.velocity.y > 0.1)
-        {
-            m_Player.GetComponent<AnimationController>().ChangeAnimationState(m_PlayerState = PlayerState.JUMP);
+            m_RB.AddForce(Vector3.up * m_JumpForce, ForceMode.Impulse);
+            m_PlayerAnimationController.ChangeAnimationState(m_PlayerState = PlayerState.JUMP);
+
         }
 
 
         //Velocity Cap
-        if(m_RB.velocity.x > 10f || m_RB.velocity.x < -10f)
+        if(m_RB.velocity.magnitude > m_MaxSpeed)
         {
-            m_RB.AddForce(-(moveDir.normalized * m_Speed), ForceMode.Impulse);
+            m_RB.velocity = m_RB.velocity.normalized * m_MaxSpeed;
         }
-        else if(m_RB.velocity.z > 10f || m_RB.velocity.z < -10f)
+
+        //Attack animations
+
+        if (m_Character_Weapon_Controller.m_EquipedWeapon == WeaponType.AXE || m_Character_Weapon_Controller.m_EquipedWeapon == WeaponType.MACE)
         {
-            m_RB.AddForce(-(moveDir.normalized * m_Speed), ForceMode.Impulse);
+            if (Input.GetButton("Fire1"))
+            {
+
+                if (!m_IsAttacking)
+                {
+                    m_IsAttacking = true;
+                    StartCoroutine(Attack());
+
+                }
+                
+            }
         }
-       
 
     }
 
-    //private IEnumerator WaitForAnimationToFinish()
-    //{
-    //    while(m_Player.GetComponent<AnimationController>().m_CharacterAnimator.GetCurrentAnimatorStateInfo(0).length != 0)
-    //    {
-    //        yield return new WaitForSeconds(AnimDelay);
-    //    }
+    private void AttackComplete()
+    {
+        m_IsAttacking = false;
+    }
 
-    //}
+    private bool IsGrounded()
+    {
+        m_IsGrounded = Physics.Raycast(gameObject.transform.position, gameObject.transform.up, gameObject.GetComponent<CapsuleCollider>().bounds.extents.y + 0.1f);
+        return m_IsGrounded;
+    }
 
-    
-
+    private IEnumerator Attack()
+    {
+        m_PlayerAnimationController.ChangeAnimationState(m_PlayerState = PlayerState.ATTACK);
+        yield return new WaitForSeconds(1.4f);
+        m_IsAttacking = false;
+    }
 
 }
  
@@ -135,9 +160,7 @@ public class Char_Phys : MonoBehaviour
 public enum PlayerState
 {
     IDLE,
-    IDLE2,
-    IDLE3,
-    IDLE4,
     RUN,
-    JUMP
+    JUMP,
+    ATTACK
 }

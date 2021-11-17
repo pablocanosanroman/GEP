@@ -7,7 +7,7 @@ public class Char_Weapon_Controller : MonoBehaviour
     public WeaponType m_EquipedWeapon;
     public Transform[] m_Weapons;
     public GameObject[] m_PickupPrefabs;
-    private Pickup m_InteractObject;
+    public Pickup m_InteractObject;
 
 
 
