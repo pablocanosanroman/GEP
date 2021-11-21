@@ -29,6 +29,8 @@ public class Char_Phys : MonoBehaviour
     private Animator m_Animator;
     private AnimationController m_PlayerAnimationController;
     private Char_Weapon_Controller m_Character_Weapon_Controller;
+    private CapsuleCollider m_PlayerCollider;
+    [SerializeField] private LayerMask m_Ground;
     
     
 
@@ -45,7 +47,7 @@ public class Char_Phys : MonoBehaviour
 
         m_Character_Weapon_Controller = GetComponent<Char_Weapon_Controller>();
 
-        
+        m_PlayerCollider = GetComponent<CapsuleCollider>();
     }
 
 
@@ -65,19 +67,19 @@ public class Char_Phys : MonoBehaviour
             float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref m_RotationSpeed, m_TurnSmoothTime); // Function to smooth the angle movement
             transform.rotation = Quaternion.Euler(0f, angle, 0f); // Make the character actually rotate
 
-             //Add force to the rigidbody
-            m_RB.AddForce(moveDir.normalized * m_Speed, ForceMode.Impulse);
-
-            if(m_RB.velocity.y == 0f )
-            {
-                m_PlayerAnimationController.ChangeAnimationState(m_PlayerState = PlayerState.RUN);
-            }
-
             
-
+             //Add force to the rigidbody
+             m_RB.AddForce(moveDir.normalized * m_Speed, ForceMode.Impulse);
+            
+             if (m_RB.velocity.y == 0f && !m_IsAttacking)
+             {
+                m_PlayerAnimationController.ChangeAnimationState(m_PlayerState = PlayerState.RUN);
+             }
+         
         }
         else 
         {
+            
             Vector3 lateralVel = Vector3.ProjectOnPlane(m_RB.velocity, Vector3.up);
             if (lateralVel.magnitude > 0.1f)
             {
@@ -102,9 +104,8 @@ public class Char_Phys : MonoBehaviour
 
         //Jumping system
         
-        if(IsGrounded() && Input.GetButtonDown("Jump"))
+        if(IsGrounded() && Input.GetButton("Jump"))
         {
-            
             m_RB.AddForce(Vector3.up * m_JumpForce, ForceMode.Impulse);
             m_PlayerAnimationController.ChangeAnimationState(m_PlayerState = PlayerState.JUMP);
 
@@ -127,7 +128,15 @@ public class Char_Phys : MonoBehaviour
                 if (!m_IsAttacking)
                 {
                     m_IsAttacking = true;
-                    StartCoroutine(Attack());
+
+                    if (m_PlayerState != PlayerState.JUMP)
+                    {
+                        StartCoroutine(Attack());
+                    }
+                    else
+                    {
+                        m_IsAttacking = false;
+                    }
 
                 }
                 
@@ -136,22 +145,18 @@ public class Char_Phys : MonoBehaviour
 
     }
 
-    private void AttackComplete()
-    {
-        m_IsAttacking = false;
-    }
-
     private bool IsGrounded()
     {
-        m_IsGrounded = Physics.Raycast(gameObject.transform.position, gameObject.transform.up, gameObject.GetComponent<CapsuleCollider>().bounds.extents.y + 0.1f);
+        m_IsGrounded = Physics.CapsuleCast(m_PlayerCollider.bounds.center, m_PlayerCollider.bounds.size, m_PlayerCollider.radius, Vector3.down, m_PlayerCollider.bounds.extents.y + 0.1f, m_Ground);
         return m_IsGrounded;
     }
 
     private IEnumerator Attack()
     {
-        m_PlayerAnimationController.ChangeAnimationState(m_PlayerState = PlayerState.ATTACK);
+        m_PlayerAnimationController.ChangeAnimationState(m_PlayerState = PlayerState.NORMALATTACK);
         yield return new WaitForSeconds(1.4f);
         m_IsAttacking = false;
+
     }
 
 }
@@ -162,5 +167,5 @@ public enum PlayerState
     IDLE,
     RUN,
     JUMP,
-    ATTACK
+    NORMALATTACK
 }

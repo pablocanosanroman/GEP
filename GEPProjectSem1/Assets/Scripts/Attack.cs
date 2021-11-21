@@ -4,15 +4,21 @@ using UnityEngine;
 
 public class Attack : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    
+
+    private void OnTriggerEnter(Collider other)
     {
-        
+        if(other.transform.root.CompareTag("Enemy"))
+        {
+            other.transform.root.GetComponent<Attack_Controller>().UpdateInteractObject(this);
+        }
     }
 
-    // Update is called once per frame
-    void Update()
+    private void OnTriggerExit(Collider other)
     {
-        
+        if (other.transform.root.CompareTag("Enemy"))
+        {
+            other.transform.root.GetComponent<Attack_Controller>().UpdateInteractObject(null);
+        }
     }
 }
