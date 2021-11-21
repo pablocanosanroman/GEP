@@ -167,5 +167,6 @@ public enum PlayerState
     IDLE,
     RUN,
     JUMP,
-    NORMALATTACK
+    NORMALATTACK,
+    DEATH
 }
