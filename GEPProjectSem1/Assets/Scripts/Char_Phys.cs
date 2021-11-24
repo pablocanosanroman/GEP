@@ -17,7 +17,8 @@ public class Char_Phys : MonoBehaviour
     private float m_RotationSpeed;
     private float m_JumpForce = 10f;
     private bool m_IsGrounded;
-    private bool m_IsAttacking = false;
+    public bool m_IsAttacking = false;
+    
     
 
     /// <summary>
@@ -119,30 +120,7 @@ public class Char_Phys : MonoBehaviour
         }
 
         //Attack animations
-
-        if (m_Character_Weapon_Controller.m_EquipedWeapon == WeaponType.AXE || m_Character_Weapon_Controller.m_EquipedWeapon == WeaponType.MACE)
-        {
-            if (Input.GetButton("Fire1"))
-            {
-
-                if (!m_IsAttacking)
-                {
-                    m_IsAttacking = true;
-
-                    if (m_PlayerState != PlayerState.JUMP)
-                    {
-                        StartCoroutine(Attack());
-                    }
-                    else
-                    {
-                        m_IsAttacking = false;
-                    }
-
-                }
-                
-            }
-        }
-
+        NormalAttackAxeOrMace();
     }
 
     private bool IsGrounded()
@@ -151,13 +129,26 @@ public class Char_Phys : MonoBehaviour
         return m_IsGrounded;
     }
 
-    private IEnumerator Attack()
+    public void NormalAttackAxeOrMace()
     {
-        m_PlayerAnimationController.ChangeAnimationState(m_PlayerState = PlayerState.NORMALATTACK);
-        yield return new WaitForSeconds(1.4f);
-        m_IsAttacking = false;
+        if (m_Character_Weapon_Controller.m_EquipedWeapon == WeaponType.AXE || m_Character_Weapon_Controller.m_EquipedWeapon == WeaponType.MACE)
+        {
+            if (Input.GetButton("Fire1"))
+            {
+                m_Animator.SetTrigger("Normal_Attack");
+                
 
+            }
+        }
     }
+
+    //private IEnumerator Attack()
+    //{
+    //    m_PlayerAnimationController.ChangeAnimationState(m_PlayerState = PlayerState.NORMALATTACK);
+    //    yield return new WaitForSeconds(1.4f);
+    //    m_IsAttacking = false;
+
+    //}
 
 }
  
@@ -167,6 +158,6 @@ public enum PlayerState
     IDLE,
     RUN,
     JUMP,
-    NORMALATTACK,
+    NORMAL_ATTACK,
     DEATH
 }

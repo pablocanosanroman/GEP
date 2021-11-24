@@ -2,13 +2,23 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemy : MonoBehaviour
+public class Enemy : MonoBehaviour, IDamagable<float>
 {
-    public float m_Health;
+    private float m_CurrentHealth;
+    private float m_MaxHealth = 10;
 
-    private void Update()
+    private void Start()
     {
-        Debug.Log(m_Health);
+        m_CurrentHealth = m_MaxHealth;
     }
 
+
+    public void Damage(float damageTaken)
+    {
+        m_CurrentHealth -= damageTaken;
+        if(m_CurrentHealth <= 0)
+        {
+            Destroy(gameObject);
+        }
+    }
 }
