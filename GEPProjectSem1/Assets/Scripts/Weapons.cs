@@ -4,24 +4,15 @@ using UnityEngine;
 
 public class Weapons : MonoBehaviour
 {
-    private Char_Phys m_PlayerPhys;
-    private Axe m_Axe;
-
-    private void Awake()
-    {
-        m_PlayerPhys = GetComponent<Char_Phys>();
-        m_Axe = GetComponent<Axe>();
-    }
+    [SerializeField] private WeaponSO m_WeaponType;
 
     private void OnTriggerEnter(Collider other)
     {
-        if(m_PlayerPhys.m_IsAttacking == true && other.transform.root.CompareTag("Enemy"))
+        IDamagable damageInterface = other.GetComponent<IDamagable>();
+        if (damageInterface != null)
         {
-            if(m_PlayerPhys.m_PlayerState == PlayerState.NORMAL_ATTACK)
-            {
-                other.GetComponent<IDamagable<float>>().Damage(m_Axe.m_AxePowerNormalAttack);
-                Debug.Log("Damage Deal");
-            }
+
+            damageInterface.Damage(m_WeaponType.m_NormalAttack);
             
         }
     }

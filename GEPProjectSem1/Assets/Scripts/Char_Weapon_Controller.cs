@@ -4,16 +4,16 @@ using UnityEngine;
 
 public class Char_Weapon_Controller : MonoBehaviour
 {
-    public WeaponType m_EquipedWeapon;
+    public PickUpWeaponType m_EquipedWeapon;
     public Transform[] m_Weapons;
     public GameObject[] m_PickupPrefabs;
     public Pickup m_InteractObject;
-
+    private GameObject m_DamageCollider;
 
 
     private void Start()
     {
-        m_EquipedWeapon = WeaponType.NONE;
+        m_EquipedWeapon = PickUpWeaponType.NONE;
         
     }
 
@@ -37,12 +37,12 @@ public class Char_Weapon_Controller : MonoBehaviour
         }
     }
 
-    public bool EquipWeapon(WeaponType weaponType)
+    public bool EquipWeapon(PickUpWeaponType weaponType)
     {
         
         if (m_EquipedWeapon != weaponType)
         {
-            if (m_EquipedWeapon != WeaponType.NONE)
+            if (m_EquipedWeapon != PickUpWeaponType.NONE)
             {
                 StartCoroutine(DropEquipedWeapon((new Vector3(transform.position.x, (transform.position.y + 1), transform.position.z)), m_EquipedWeapon));
                 m_Weapons[(int)m_EquipedWeapon].gameObject.SetActive(false);
@@ -50,6 +50,8 @@ public class Char_Weapon_Controller : MonoBehaviour
 
             m_EquipedWeapon = weaponType;
             m_Weapons[(int)m_EquipedWeapon].gameObject.SetActive(true);
+            m_DamageCollider = m_Weapons[(int)m_EquipedWeapon].GetComponentInChildren<Collider>(true).gameObject;
+            m_DamageCollider.SetActive(false);
 
             return true;
         }
@@ -72,9 +74,7 @@ public class Char_Weapon_Controller : MonoBehaviour
 
     }
 
-
-
-    private IEnumerator DropEquipedWeapon(Vector3 location, WeaponType weapon)
+    private IEnumerator DropEquipedWeapon(Vector3 location, PickUpWeaponType weapon)
     {
 
         yield return new WaitForSeconds(0.5f);
@@ -83,5 +83,8 @@ public class Char_Weapon_Controller : MonoBehaviour
 
     }
 
-    
+    public void SetDamageTriggerActive(int active)
+    {
+        m_DamageCollider.gameObject.SetActive((active == 1)? true : false);
+    } 
 }

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Pickup : MonoBehaviour
 {
-    public WeaponType m_WeaponType;
+    public PickUpWeaponType m_WeaponType;
    
 
     private void OnTriggerEnter(Collider other)
@@ -24,7 +24,7 @@ public class Pickup : MonoBehaviour
     }
 }
 
-public enum WeaponType
+public enum PickUpWeaponType
 {
     NONE = -1,
     AXE = 0,

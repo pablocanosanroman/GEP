@@ -74,7 +74,15 @@ public class Char_Phys : MonoBehaviour
             
              if (m_RB.velocity.y == 0f && !m_IsAttacking)
              {
-                m_PlayerAnimationController.ChangeAnimationState(m_PlayerState = PlayerState.RUN);
+                if(m_Character_Weapon_Controller.m_EquipedWeapon == PickUpWeaponType.HAMMER)
+                {
+                    m_PlayerAnimationController.ChangeAnimationState(m_PlayerState = PlayerState.HAMMER_RUN);
+                }
+                else
+                {
+                    m_PlayerAnimationController.ChangeAnimationState(m_PlayerState = PlayerState.RUN);
+                }
+                
              }
          
         }
@@ -96,10 +104,18 @@ public class Char_Phys : MonoBehaviour
         }
 
         m_Animator.SetFloat("RunSpeed", m_RB.velocity.magnitude / m_MaxSpeed);
+        m_Animator.SetFloat("HammerRunSpeed", m_RB.velocity.magnitude / m_MaxSpeed);
 
         if (m_RB.velocity == Vector3.zero && !m_IsAttacking)
         {
-            m_PlayerAnimationController.ChangeAnimationState(m_PlayerState = PlayerState.IDLE);
+            if(m_Character_Weapon_Controller.m_EquipedWeapon == PickUpWeaponType.HAMMER)
+            {
+                m_PlayerAnimationController.ChangeAnimationState(m_PlayerState = PlayerState.HAMMER_IDLE);
+            }
+            else
+            {
+                m_PlayerAnimationController.ChangeAnimationState(m_PlayerState = PlayerState.IDLE);
+            }
         }
 
 
@@ -131,12 +147,23 @@ public class Char_Phys : MonoBehaviour
 
     public void NormalAttackAxeOrMace()
     {
-        if (m_Character_Weapon_Controller.m_EquipedWeapon == WeaponType.AXE || m_Character_Weapon_Controller.m_EquipedWeapon == WeaponType.MACE)
+        if (m_Character_Weapon_Controller.m_EquipedWeapon == PickUpWeaponType.AXE || m_Character_Weapon_Controller.m_EquipedWeapon == PickUpWeaponType.MACE)
         {
             if (Input.GetButton("Fire1"))
             {
-                m_Animator.SetTrigger("Normal_Attack");
                 
+                m_Animator.SetTrigger("Normal_Attack_Axe_Mace");
+                
+
+            }
+        }
+        else if(m_Character_Weapon_Controller.m_EquipedWeapon == PickUpWeaponType.HAMMER)
+        {
+            if (Input.GetButton("Fire1"))
+            {
+
+                m_Animator.SetTrigger("Normal_Attack_Hammer");
+
 
             }
         }
@@ -156,8 +183,11 @@ public class Char_Phys : MonoBehaviour
 public enum PlayerState
 {
     IDLE,
+    HAMMER_IDLE,
     RUN,
+    HAMMER_RUN,
     JUMP,
-    NORMAL_ATTACK,
+    NORMAL_ATTACK_AXE_MACE,
+    NORMAL_ATTACK_HAMMER,
     DEATH
 }

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemy : MonoBehaviour, IDamagable<float>
+public class Enemy : MonoBehaviour, IDamagable
 {
     private float m_CurrentHealth;
     private float m_MaxHealth = 10;
