@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: Hammer
   m_EditorClassIdentifier: 
   m_Weapon: 5
-  m_NormalAttack: 6
-  m_SpecialAttack: 12
+  m_NormalAttack: 10
+  m_SpecialAttack: 20

@@ -5,7 +5,7 @@ using UnityEngine;
 public class Enemy : MonoBehaviour, IDamagable
 {
     private float m_CurrentHealth;
-    private float m_MaxHealth = 10;
+    private float m_MaxHealth = 30;
 
     private void Start()
     {

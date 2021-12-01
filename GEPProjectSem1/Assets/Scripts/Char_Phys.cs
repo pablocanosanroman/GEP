@@ -18,7 +18,7 @@ public class Char_Phys : MonoBehaviour
     private float m_JumpForce = 1f;
     private bool m_IsGrounded;
     public bool m_IsAttacking = false;
-    
+    public bool m_SpecialAttack = false;
     
 
     /// <summary>
@@ -31,6 +31,9 @@ public class Char_Phys : MonoBehaviour
     private AnimationController m_PlayerAnimationController;
     private Char_Weapon_Controller m_Character_Weapon_Controller;
     private CapsuleCollider m_PlayerCollider;
+    [SerializeField] private Character m_PlayerStats;
+    [SerializeField] private AnimatorOverrideController m_PlayerAnimOverrideController;
+    [SerializeField] private AnimatorOverrideController m_PlayerAnimOverrideControllerDefault;
     [SerializeField] private LayerMask m_Ground;
     
     
@@ -49,6 +52,37 @@ public class Char_Phys : MonoBehaviour
         m_Character_Weapon_Controller = GetComponent<Char_Weapon_Controller>();
 
         m_PlayerCollider = GetComponent<CapsuleCollider>();
+    }
+
+    private void Update()
+    {
+        if (m_RB.velocity == Vector3.zero && !m_IsAttacking)
+        {
+            
+            if (m_Character_Weapon_Controller.m_EquipedWeapon == PickUpWeaponType.HAMMER)
+            {
+                m_PlayerAnimationController.ChangeAnimationState(m_PlayerState = PlayerState.HAMMER_IDLE);
+               
+            }
+            else if (m_Character_Weapon_Controller.m_EquipedWeapon == PickUpWeaponType.SPEAR)
+            {
+                m_PlayerAnimationController.ChangeAnimationState(m_PlayerState = PlayerState.SPEAR_IDLE);
+                
+            }
+            else if (m_Character_Weapon_Controller.m_EquipedWeapon == PickUpWeaponType.STAFF)
+            {
+                m_PlayerAnimationController.ChangeAnimationState(m_PlayerState = PlayerState.STAFF_IDLE);
+               
+            }
+            else
+            {
+                m_PlayerAnimationController.ChangeAnimationState(m_PlayerState = PlayerState.IDLE);
+                
+            }
+        }
+
+        //Attack animations
+        AttackAnimations();
     }
 
 
@@ -74,7 +108,8 @@ public class Char_Phys : MonoBehaviour
             
              if (m_RB.velocity.y == 0f && !m_IsAttacking)
              {
-                if(m_Character_Weapon_Controller.m_EquipedWeapon == PickUpWeaponType.HAMMER)
+                
+                if (m_Character_Weapon_Controller.m_EquipedWeapon == PickUpWeaponType.HAMMER)
                 {
                     m_PlayerAnimationController.ChangeAnimationState(m_PlayerState = PlayerState.HAMMER_RUN);
                 }
@@ -116,33 +151,13 @@ public class Char_Phys : MonoBehaviour
         m_Animator.SetFloat("SpearRunSpeed", m_RB.velocity.magnitude / m_MaxSpeed);
         m_Animator.SetFloat("StaffRunSpeed", m_RB.velocity.magnitude / m_MaxSpeed);
 
-        if (m_RB.velocity == Vector3.zero && !m_IsAttacking)
-        {
-            if(m_Character_Weapon_Controller.m_EquipedWeapon == PickUpWeaponType.HAMMER)
-            {
-                m_PlayerAnimationController.ChangeAnimationState(m_PlayerState = PlayerState.HAMMER_IDLE);
-            }
-            else if(m_Character_Weapon_Controller.m_EquipedWeapon == PickUpWeaponType.SPEAR)
-            {
-                m_PlayerAnimationController.ChangeAnimationState(m_PlayerState = PlayerState.SPEAR_IDLE);
-            }
-            else if (m_Character_Weapon_Controller.m_EquipedWeapon == PickUpWeaponType.STAFF)
-            {
-                m_PlayerAnimationController.ChangeAnimationState(m_PlayerState = PlayerState.STAFF_IDLE);
-            }
-            else
-            {
-                m_PlayerAnimationController.ChangeAnimationState(m_PlayerState = PlayerState.IDLE);
-            }
-        }
-
-
         //Jumping system
         
         if(IsGrounded() && Input.GetButton("Jump"))
         {
             m_PlayerAnimationController.ChangeAnimationState(m_PlayerState = PlayerState.JUMP);
             m_RB.AddForce(Vector3.up * m_JumpForce, ForceMode.Impulse);
+            m_PlayerStats.m_CurrentHealth -= 3f;
         }
 
 
@@ -152,8 +167,7 @@ public class Char_Phys : MonoBehaviour
             m_RB.velocity = m_RB.velocity.normalized * m_MaxSpeed;
         }
 
-        //Attack animations
-        NormalAttackAxeOrMace();
+        
     }
 
     private bool IsGrounded()
@@ -162,48 +176,52 @@ public class Char_Phys : MonoBehaviour
         return m_IsGrounded;
     }
 
-    public void NormalAttackAxeOrMace()
+    public void AttackAnimations()
     {
-        if (m_Character_Weapon_Controller.m_EquipedWeapon == PickUpWeaponType.AXE || m_Character_Weapon_Controller.m_EquipedWeapon == PickUpWeaponType.MACE)
+       
+        if (Input.GetMouseButtonDown(0))
         {
-            if (Input.GetButton("Fire1"))
+            m_SpecialAttack = false;
+            m_Animator.runtimeAnimatorController = m_PlayerAnimOverrideControllerDefault;
+            if (m_Character_Weapon_Controller.m_EquipedWeapon == PickUpWeaponType.AXE || m_Character_Weapon_Controller.m_EquipedWeapon == PickUpWeaponType.MACE)
             {
-
-                m_Animator.SetTrigger("Normal_Attack_Axe_Mace");
-
-
+                m_Animator.SetTrigger("Attack_Axe_Mace");
+            }
+            else if (m_Character_Weapon_Controller.m_EquipedWeapon == PickUpWeaponType.HAMMER)
+            {
+                m_Animator.SetTrigger("Attack_Hammer");
+            }
+            else if (m_Character_Weapon_Controller.m_EquipedWeapon == PickUpWeaponType.SPEAR)
+            {
+                m_Animator.SetTrigger("Attack_Spear");
+            }
+            else if (m_Character_Weapon_Controller.m_EquipedWeapon == PickUpWeaponType.STAFF)
+            {
+                m_Animator.SetTrigger("Attack_Staff");
             }
         }
-        else if (m_Character_Weapon_Controller.m_EquipedWeapon == PickUpWeaponType.HAMMER)
+        else if(Input.GetMouseButtonDown(1))
         {
-            if (Input.GetButton("Fire1"))
+            m_SpecialAttack = true;
+            m_Animator.runtimeAnimatorController = m_PlayerAnimOverrideController;
+            if (m_Character_Weapon_Controller.m_EquipedWeapon == PickUpWeaponType.AXE || m_Character_Weapon_Controller.m_EquipedWeapon == PickUpWeaponType.MACE)
             {
-
-                m_Animator.SetTrigger("Normal_Attack_Hammer");
-
-
+                m_Animator.SetTrigger("Attack_Axe_Mace");
+            }
+            else if (m_Character_Weapon_Controller.m_EquipedWeapon == PickUpWeaponType.HAMMER)
+            {
+                m_Animator.SetTrigger("Attack_Hammer");
+            }
+            else if (m_Character_Weapon_Controller.m_EquipedWeapon == PickUpWeaponType.SPEAR)
+            {
+                m_Animator.SetTrigger("Attack_Spear");
+            }
+            else if (m_Character_Weapon_Controller.m_EquipedWeapon == PickUpWeaponType.STAFF)
+            {
+                m_Animator.SetTrigger("Attack_Staff");
             }
         }
-        else if (m_Character_Weapon_Controller.m_EquipedWeapon == PickUpWeaponType.SPEAR)
-        {
-            if (Input.GetButton("Fire1"))
-            {
-
-                m_Animator.SetTrigger("Normal_Attack_Spear");
-
-
-            }
-        }
-        else if (m_Character_Weapon_Controller.m_EquipedWeapon == PickUpWeaponType.STAFF)
-        {
-            if (Input.GetButton("Fire1"))
-            {
-
-                m_Animator.SetTrigger("Normal_Attack_Staff");
-
-
-            }
-        }
+        
     }
 }
  
@@ -219,9 +237,9 @@ public enum PlayerState
     SPEAR_RUN,
     STAFF_RUN,
     JUMP,
-    NORMAL_ATTACK_AXE_MACE,
-    NORMAL_ATTACK_HAMMER,
-    NORMAL_ATTACK_SPEAR,
-    NORMAL_ATTACK_STAFF,
+    ATTACK_AXE_MACE,
+    ATTACK_HAMMER,
+    ATTACK_SPEAR,
+    ATTACK_STAFF,
     DEATH
 }

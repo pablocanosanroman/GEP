@@ -5,7 +5,7 @@ using UnityEngine;
 public class Character : MonoBehaviour
 {
     public float m_CurrentHealth;
-    private float m_MaxHealth = 10;
+    private float m_MaxHealth = 30;
     private Char_Phys m_PlayerPhys;
     
     private void Awake()
@@ -30,6 +30,7 @@ public class Character : MonoBehaviour
         {
 
             m_PlayerPhys.m_PlayerState = PlayerState.DEATH;
+            
 
         }
         

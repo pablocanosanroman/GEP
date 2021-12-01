@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: Spear
   m_EditorClassIdentifier: 
   m_Weapon: 3
-  m_NormalAttack: 2
+  m_NormalAttack: 4
   m_SpecialAttack: 10
