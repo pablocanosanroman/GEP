@@ -54,30 +54,30 @@ public class Char_Phys : MonoBehaviour
         m_PlayerCollider = GetComponent<CapsuleCollider>();
     }
 
-    private void Update()
+    protected virtual void Update()
     {
         if (m_RB.velocity == Vector3.zero && !m_IsAttacking)
         {
-            
+
             if (m_Character_Weapon_Controller.m_EquipedWeapon == PickUpWeaponType.HAMMER)
             {
                 m_PlayerAnimationController.ChangeAnimationState(m_PlayerState = PlayerState.HAMMER_IDLE);
-               
+
             }
             else if (m_Character_Weapon_Controller.m_EquipedWeapon == PickUpWeaponType.SPEAR)
             {
                 m_PlayerAnimationController.ChangeAnimationState(m_PlayerState = PlayerState.SPEAR_IDLE);
-                
+
             }
             else if (m_Character_Weapon_Controller.m_EquipedWeapon == PickUpWeaponType.STAFF)
             {
                 m_PlayerAnimationController.ChangeAnimationState(m_PlayerState = PlayerState.STAFF_IDLE);
-               
+
             }
             else
             {
                 m_PlayerAnimationController.ChangeAnimationState(m_PlayerState = PlayerState.IDLE);
-                
+
             }
         }
 
@@ -86,7 +86,7 @@ public class Char_Phys : MonoBehaviour
     }
 
 
-    private void FixedUpdate()
+    protected virtual void FixedUpdate()
     {
        
         //gets the direction based on the input
