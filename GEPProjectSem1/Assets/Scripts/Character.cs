@@ -1,17 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Character : MonoBehaviour
 {
     public float m_CurrentHealth;
     private float m_MaxHealth = 30;
-    private Char_Phys m_PlayerPhys;
-    
-    private void Awake()
-    {
-        m_PlayerPhys = gameObject.GetComponent<Char_Phys>();
-    }
+    [SerializeField] private Char_Phys m_PlayerPhys;
 
     private void Start()
     {
@@ -33,6 +29,14 @@ public class Character : MonoBehaviour
             
 
         }
+
+        if(gameObject.transform.position.y < -5)
+        {
+
+            Destroy(gameObject);
+            SceneManager.LoadScene("GameOver", LoadSceneMode.Single);
+        }
         
     }
+
 }

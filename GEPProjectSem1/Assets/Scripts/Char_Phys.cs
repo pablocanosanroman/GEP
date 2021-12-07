@@ -172,7 +172,7 @@ public class Char_Phys : MonoBehaviour
 
     private bool IsGrounded()
     {
-        m_IsGrounded = Physics.CapsuleCast(m_PlayerCollider.bounds.center, m_PlayerCollider.bounds.size, m_PlayerCollider.radius, Vector3.down, m_PlayerCollider.bounds.extents.y + 0.1f, m_Ground);
+        m_IsGrounded = Physics.CapsuleCast(m_PlayerCollider.bounds.center, m_PlayerCollider.bounds.size, m_PlayerCollider.radius, Vector3.down, m_PlayerCollider.bounds.extents.y + 0.05f, m_Ground);
         return m_IsGrounded;
     }
 

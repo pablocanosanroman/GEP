@@ -22,7 +22,6 @@ public class AIEnemy : Char_Phys
 
     protected override void Update()
     {
-
         base.Update();
     }
 
@@ -51,27 +50,30 @@ public class AIEnemy : Char_Phys
                 break;
 
         }
-
         base.FixedUpdate();
     }
 
     private void Wander()
     {
-        if (m_CurrentPath.corners.Length < 2)
+        if(m_CurrentPath != null)
         {
-            NavMesh.CalculatePath(transform.position, NewWanderPoint(), NavMesh.AllAreas, m_CurrentPath);
+            if (m_CurrentPath.corners.Length < 2)
+            {
+                NavMesh.CalculatePath(transform.position, NewWanderPoint(), NavMesh.AllAreas, m_CurrentPath);
+            }
+
+            Vector3 currentDestination = m_CurrentPath.corners[m_CurrentPath.corners.Length - 1];
+
+            if ((currentDestination - transform.position).magnitude < 0.5f)
+            {
+                currentDestination = NewWanderPoint();
+            }
+            NavMesh.CalculatePath(transform.position, currentDestination, NavMesh.AllAreas, m_CurrentPath);
+
+            Vector3 toNextPoint = m_CurrentPath.corners[1] - transform.position;
+            
         }
-
-        Vector3 currentDestination = m_CurrentPath.corners[m_CurrentPath.corners.Length - 1];
-
-        if ((currentDestination - transform.position).magnitude < 0.5f)
-        {
-            currentDestination = NewWanderPoint();
-        }
-        NavMesh.CalculatePath(transform.position, currentDestination, NavMesh.AllAreas, m_CurrentPath);
-
-        Vector3 toNextPoint = m_CurrentPath.corners[1] - transform.position;
-        m_RB.AddForce(toNextPoint * m_EnemySpeed, ForceMode.Impulse);
+        
     }
 
     private bool FindTarget()
