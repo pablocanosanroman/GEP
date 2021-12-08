@@ -9,6 +9,9 @@ public class Char_Weapon_Controller : MonoBehaviour
     public GameObject[] m_PickupPrefabs;
     public Pickup m_InteractObject;
     private GameObject m_DamageCollider;
+    public GameObject m_Staff;
+    public GameObject m_StaffShotPrefab;
+    private float m_FiringForce = 15f;
 
 
     private void Start()
@@ -86,5 +89,12 @@ public class Char_Weapon_Controller : MonoBehaviour
     public void SetDamageTriggerActive(int active)
     {
         m_DamageCollider.gameObject.SetActive((active == 1)? true : false);
-    } 
+    }
+
+    private void Fire()
+    {
+        GameObject tempRef = Instantiate<GameObject>(m_StaffShotPrefab, m_Staff.transform.position, m_Staff.transform.rotation);
+        Vector3 direction = transform.forward;
+        tempRef.GetComponent<Rigidbody>().AddForce(direction * m_FiringForce, ForceMode.Impulse);
+    }
 }

@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: Axe
   m_EditorClassIdentifier: 
   m_Weapon: 1
-  m_NormalAttack: 4
-  m_SpecialAttack: 9
+  m_NormalAttack: 6
+  m_SpecialAttack: 11

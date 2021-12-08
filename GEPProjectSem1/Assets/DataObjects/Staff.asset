@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: Staff
   m_EditorClassIdentifier: 
   m_Weapon: 4
-  m_NormalAttack: 20
-  m_SpecialAttack: 2
+  m_NormalAttack: 30
+  m_SpecialAttack: 10

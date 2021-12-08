@@ -15,10 +15,12 @@ public class Char_Phys : MonoBehaviour
     private float m_StopingForce = 10f;
     private float m_MaxSpeed = 8f;
     private float m_RotationSpeed;
-    private float m_JumpForce = 1f;
+    private float m_JumpForce = 1.5f;
+    private float m_JumpDownForce = 0.8f;
     private bool m_IsGrounded;
     public bool m_IsAttacking = false;
     public bool m_SpecialAttack = false;
+    public bool m_BulletActive = false;
     
 
     /// <summary>
@@ -159,6 +161,10 @@ public class Char_Phys : MonoBehaviour
             m_RB.AddForce(Vector3.up * m_JumpForce, ForceMode.Impulse);
             m_PlayerStats.m_CurrentHealth -= 3f;
         }
+        else if(!IsGrounded())
+        {
+            StartCoroutine(JumpForceDown());
+        }
 
 
         //Velocity Cap
@@ -198,6 +204,8 @@ public class Char_Phys : MonoBehaviour
             else if (m_Character_Weapon_Controller.m_EquipedWeapon == PickUpWeaponType.STAFF)
             {
                 m_Animator.SetTrigger("Attack_Staff");
+                m_BulletActive = true;
+                StartCoroutine(SetBulletActiveFalse());
             }
         }
         else if(Input.GetMouseButtonDown(1))
@@ -223,8 +231,22 @@ public class Char_Phys : MonoBehaviour
         }
         
     }
+
+    IEnumerator JumpForceDown()
+    {
+        yield return new WaitForSeconds(0.3f);
+        m_RB.AddForce(-Vector3.up * m_JumpDownForce, ForceMode.Impulse);
+
+    }
+
+    IEnumerator SetBulletActiveFalse()
+    {
+        yield return new WaitForSeconds(2f);
+        m_BulletActive = false;
+    }
 }
  
+
 
 public enum PlayerState
 {

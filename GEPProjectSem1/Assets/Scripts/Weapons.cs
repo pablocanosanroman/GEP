@@ -23,8 +23,14 @@ public class Weapons : MonoBehaviour
                 Debug.Log("NormalAttack dealt");
                 damageInterface.Damage(m_WeaponType.m_NormalAttack);
             }
-            
-            
+
+            if (m_Player.m_BulletActive == true)
+            {
+                Debug.Log("true");
+                Debug.Log("NormalAttack dealt");
+                damageInterface.Damage(m_WeaponType.m_NormalAttack);
+            }
+
         }
     }
 }
