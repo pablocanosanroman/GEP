@@ -8,29 +8,29 @@ public class Camera_Chase : MonoBehaviour
     [SerializeField] private Transform m_TrackedObjectTransform; //Transform of the object that is being followed
     [SerializeField] private float m_AutoCamSpeed = 3f;
     [SerializeField] private float m_CamSpeed = 10f;
-    [SerializeField] private float m_Sensitivity = 8f;
+    
     private void Update()
     {
-
         if (Input.GetKey(KeyCode.Mouse2))
         {
             if (Input.GetAxis("Mouse X") > 0)
             {
-                transform.position -= new Vector3(Input.GetAxis("Mouse X") * Time.deltaTime * m_CamSpeed, Input.GetAxisRaw("Mouse Y") * Time.deltaTime * m_CamSpeed, 0.0f);
+                transform.position -= new Vector3(Input.GetAxis("Mouse X") * Time.deltaTime * m_CamSpeed, 0.0f, 0.0f);
             }
             else if (Input.GetAxis("Mouse X") < 0)
             {
-                transform.position -= new Vector3(Input.GetAxis("Mouse X") * Time.deltaTime * m_CamSpeed, Input.GetAxisRaw("Mouse Y") * Time.deltaTime * m_CamSpeed, 0.0f);
+                transform.position -= new Vector3(Input.GetAxis("Mouse X") * Time.deltaTime * m_CamSpeed, 0.0f, 0.0f);
             }
+            
         }
     }
 
     private void LateUpdate()
     {
         //AutoCam
-        Vector3 toTarget = m_TrackedObjectTransform.position - transform.position; //First we calculate the distance between the camera and the player
+        Vector3 toTarget = (m_TrackedObjectTransform.position - transform.position).normalized; //First we calculate the distance between the camera and the player
 
-        transform.rotation = Quaternion.LookRotation(toTarget.normalized, Vector3.up); // We set the rotation of the camera depending on what the distance of the object from the cam is
+        transform.rotation = Quaternion.LookRotation(toTarget, Vector3.up); // We set the rotation of the camera depending on what the distance of the object from the cam is
 
         float worldYRotRad = transform.rotation.eulerAngles.y * Mathf.Deg2Rad; //The y rotation of the camera in radians
 

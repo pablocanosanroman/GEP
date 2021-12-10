@@ -6,7 +6,7 @@ using UnityEngine.AI;
 public class AIEnemy : Char_Phys
 {
     private NavMeshPath m_CurrentPath;
-    private Rigidbody m_RB;
+    private Rigidbody m_EnemyRB;
     private AIState m_State;
     private float m_SightRange = 3f;
     private float m_EnemySpeed;
@@ -17,12 +17,12 @@ public class AIEnemy : Char_Phys
     private void Awake()
     {
         m_State = AIState.WANDER;
-        m_RB = GetComponent<Rigidbody>();
+        m_EnemyRB = GetComponent<Rigidbody>();
     }
 
     protected override void Update()
     {
-        base.Update();
+        
     }
 
     protected override void FixedUpdate()
@@ -50,29 +50,27 @@ public class AIEnemy : Char_Phys
                 break;
 
         }
-        base.FixedUpdate();
+        
     }
 
     private void Wander()
     {
-        if(m_CurrentPath != null)
+        if (m_CurrentPath.corners.Length < 2)
         {
-            if (m_CurrentPath.corners.Length < 2)
-            {
-                NavMesh.CalculatePath(transform.position, NewWanderPoint(), NavMesh.AllAreas, m_CurrentPath);
-            }
-
-            Vector3 currentDestination = m_CurrentPath.corners[m_CurrentPath.corners.Length - 1];
-
-            if ((currentDestination - transform.position).magnitude < 0.5f)
-            {
-                currentDestination = NewWanderPoint();
-            }
-            NavMesh.CalculatePath(transform.position, currentDestination, NavMesh.AllAreas, m_CurrentPath);
-
-            Vector3 toNextPoint = m_CurrentPath.corners[1] - transform.position;
-            
+           NavMesh.CalculatePath(transform.position, NewWanderPoint(), NavMesh.AllAreas, m_CurrentPath);
         }
+
+        Vector3 currentDestination = m_CurrentPath.corners[m_CurrentPath.corners.Length - 1];
+
+        if ((currentDestination - transform.position).magnitude < 0.5f)
+        {
+           currentDestination = NewWanderPoint();
+        }
+        NavMesh.CalculatePath(transform.position, currentDestination, NavMesh.AllAreas, m_CurrentPath);
+
+        Vector3 toNextPoint = m_CurrentPath.corners[1] - transform.position;
+        m_EnemyRB.AddForce(toNextPoint * m_EnemySpeed, ForceMode.Impulse);
+        
         
     }
 
