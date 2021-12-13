@@ -19,6 +19,7 @@ public class Enemy : MonoBehaviour, IDamagable
         m_CurrentHealth -= damageTaken;
         if(m_CurrentHealth <= 0)
         {
+            
             Destroy(gameObject);
             m_IsDead = true;
         }

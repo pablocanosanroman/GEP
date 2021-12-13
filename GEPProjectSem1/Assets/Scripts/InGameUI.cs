@@ -24,10 +24,13 @@ public class InGameUI : MonoBehaviour
     [SerializeField] private Enemy[] m_Enemies;
     public int m_Points;
     public Text m_PointsText;
-    private float m_EnemiesCount = 10;
+    private int m_TotalEnemies = 10;
     //Canvas
     [SerializeField] private GameObject m_InGameCanvas;
     [SerializeField] private GameObject m_WinCanvas;
+    //EnemyCount
+    public Text m_EnemyCountText;
+    private int m_CurrentEnemyCount;
 
     private void Start()
     {
@@ -40,6 +43,7 @@ public class InGameUI : MonoBehaviour
         SliderChange();
         Timer();
         GetPoints();
+        EnemyCount();
         
     }
 
@@ -104,15 +108,28 @@ public class InGameUI : MonoBehaviour
         m_WeaponImage.sprite = m_WeaponSprites[weaponSprite];
     }
 
+    private void EnemyCount()
+    {
+        if(m_CurrentEnemyCount >= m_TotalEnemies)
+        {
+            m_CurrentEnemyCount = m_TotalEnemies;
+        }
+
+        m_EnemyCountText.text = m_CurrentEnemyCount.ToString() + " / " + m_TotalEnemies.ToString();
+
+    }
+
     private void GetPoints()
     {
-        for(int i = 0; i < m_EnemiesCount; i++)
+        for(int i = 0; i < m_TotalEnemies; i++)
         {
             if(m_Enemies[i].m_CurrentHealth <= 0)
             {
                 if(m_Enemies[i].m_IsDead)
                 {
                     m_Points += 100;
+                    m_CurrentEnemyCount++;
+
                     m_Enemies[i].m_IsDead = false;
                 }
                 

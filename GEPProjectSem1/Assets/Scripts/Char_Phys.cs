@@ -37,6 +37,7 @@ public class Char_Phys : MonoBehaviour
     [SerializeField] private AnimatorOverrideController m_PlayerAnimOverrideController;
     [SerializeField] private AnimatorOverrideController m_PlayerAnimOverrideControllerDefault;
     [SerializeField] private LayerMask m_Ground;
+    [SerializeField] private GameObject m_ParticleSystemStaff;
     
     
 
@@ -214,8 +215,10 @@ public class Char_Phys : MonoBehaviour
             else if (m_Character_Weapon_Controller.m_EquipedWeapon == PickUpWeaponType.STAFF)
             {
                 m_Animator.SetTrigger("Attack_Staff");
+                m_ParticleSystemStaff.SetActive(true);
                 m_BulletActive = true;
                 StartCoroutine(SetBulletActiveFalse());
+                StartCoroutine(HideParticleSystemStaff());
             }
         }
         else if(GetRightMouseButtonInput())
@@ -282,6 +285,12 @@ public class Char_Phys : MonoBehaviour
     {
         yield return new WaitForSeconds(2f);
         m_BulletActive = false;
+    }
+
+    IEnumerator HideParticleSystemStaff()
+    {
+        yield return new WaitForSeconds(0.9f);
+        m_ParticleSystemStaff.SetActive(false);
     }
 }
  
