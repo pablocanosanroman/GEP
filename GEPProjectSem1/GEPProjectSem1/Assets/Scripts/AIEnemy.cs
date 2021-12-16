@@ -9,10 +9,10 @@ public class AIEnemy : Char_Phys
     private Rigidbody m_EnemyRB;
     private AIState m_State;
     private float m_SightRange = 3f;
-    private float m_EnemySpeed = 1f;
+    private float m_EnemySpeed = 0.15f;
     private bool m_PlayerInSight;
     private bool m_WeaponPicked;
-    private float m_MaxSpeed = 3f;
+    private float m_MaxSpeed = 0.5f;
     [SerializeField] private LayerMask m_PlayerLayerMask;
 
     private void Awake()
@@ -70,7 +70,7 @@ public class AIEnemy : Char_Phys
 
         Vector3 currentDestination = m_CurrentPath.corners[m_CurrentPath.corners.Length - 1];
 
-        if ((currentDestination - transform.position).magnitude < 0.001f)
+        if ((currentDestination - transform.position).magnitude < 0.5f)
         {
            currentDestination = NewWanderPoint();
         }

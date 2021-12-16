@@ -9061,6 +9061,7 @@ GameObject:
   m_Component:
   - component: {fileID: 732533598}
   - component: {fileID: 732533597}
+  - component: {fileID: 732533599}
   m_Layer: 0
   m_Name: SoundManager
   m_TagString: Untagged
@@ -9178,6 +9179,25 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 16
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &732533599
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 732533596}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 83a8f4cd32ced1b488a1df442397ea87, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Sounds:
+  - m_ClipName: MagicSpell
+    m_Clip: {fileID: 8300000, guid: 798ebd212e82e784b9e83ecdb7beb9cf, type: 3}
+    m_Volume: 0.476
+    m_Pitch: 1
+    m_MixerGroup: {fileID: -6992852734031945196, guid: fc1a1f0f452b67446a68e9bbd68d3b6b, type: 2}
+    m_Source: {fileID: 0}
 --- !u!1 &779877287
 GameObject:
   m_ObjectHideFlags: 0
@@ -14235,6 +14255,14 @@ PrefabInstance:
       propertyPath: cam
       value: 
       objectReference: {fileID: 1687258585}
+    - target: {fileID: 7944737935641050537, guid: c63cf06331eab48418affa4abcba6a57, type: 3}
+      propertyPath: m_SoundManager
+      value: 
+      objectReference: {fileID: 732533599}
+    - target: {fileID: 7944737935641050537, guid: c63cf06331eab48418affa4abcba6a57, type: 3}
+      propertyPath: m_StaffShotSound
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 7944737935641050537, guid: c63cf06331eab48418affa4abcba6a57, type: 3}
       propertyPath: m_ParticleSystemStaff
       value: 
@@ -19639,7 +19667,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_LocalCamOffset: {x: 0, y: 3, z: -5}
   m_TrackedObjectTransform: {fileID: 1107495798}
-  m_AutoCamSpeed: 4
+  m_AutoCamSpeed: 5
   m_CamSpeed: 80
 --- !u!20 &1687258584
 Camera:

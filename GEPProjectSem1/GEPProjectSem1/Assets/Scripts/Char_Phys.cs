@@ -22,6 +22,7 @@ public class Char_Phys : MonoBehaviour
     public bool m_SpecialAttack = false;
     public bool m_BulletActive = false;
     
+    
 
     /// <summary>
     /// The attached Rigidbody
@@ -38,6 +39,8 @@ public class Char_Phys : MonoBehaviour
     [SerializeField] private AnimatorOverrideController m_PlayerAnimOverrideControllerDefault;
     [SerializeField] private LayerMask m_Ground;
     [SerializeField] private GameObject m_ParticleSystemStaff;
+    [SerializeField] private AudioManager m_SoundManager;
+    
     
     
 
@@ -55,6 +58,8 @@ public class Char_Phys : MonoBehaviour
         m_Character_Weapon_Controller = GetComponent<Char_Weapon_Controller>();
 
         m_PlayerCollider = GetComponent<CapsuleCollider>();
+
+        
     }
 
     protected virtual void Update()
@@ -64,6 +69,7 @@ public class Char_Phys : MonoBehaviour
 
         //Attack animations
         AttackAnimations();
+        
     }
 
 
@@ -214,11 +220,14 @@ public class Char_Phys : MonoBehaviour
             }
             else if (m_Character_Weapon_Controller.m_EquipedWeapon == PickUpWeaponType.STAFF)
             {
+                
                 m_Animator.SetTrigger("Attack_Staff");
                 m_ParticleSystemStaff.SetActive(true);
                 m_BulletActive = true;
                 StartCoroutine(SetBulletActiveFalse());
                 StartCoroutine(HideParticleSystemStaff());
+                m_SoundManager.Play("MagicSpell");
+                
             }
         }
         else if(GetRightMouseButtonInput())
