@@ -11,7 +11,7 @@ public class Sound
     [Range(0f, 1f)]
     public float m_Volume;
 
-    [Range(0.1f, 3f)]
+    [Range(0.1f, 2f)]
     public float m_Pitch;
 
     public AudioMixerGroup m_MixerGroup;
