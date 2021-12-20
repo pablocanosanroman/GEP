@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class Character : MonoBehaviour
+public class Character : MonoBehaviour, IDamagable
 {
     public float m_CurrentHealth;
     private float m_MaxHealth = 30;
@@ -22,13 +22,6 @@ public class Character : MonoBehaviour
 
     private void Death()
     {
-        if (m_CurrentHealth <= 0)
-        {
-
-            m_PlayerPhys.m_PlayerState = PlayerState.DEATH;
-            
-
-        }
 
         if(gameObject.transform.position.y < -5)
         {
@@ -37,6 +30,16 @@ public class Character : MonoBehaviour
             SceneManager.LoadScene("GameOver", LoadSceneMode.Single);
         }
         
+    }
+
+    public void Damage(float damageTaken)
+    {
+        m_CurrentHealth -= damageTaken;
+        if (m_CurrentHealth <= 0)
+        {
+            Destroy(gameObject);
+            SceneManager.LoadScene("GameOver", LoadSceneMode.Single);
+        }
     }
 
 }

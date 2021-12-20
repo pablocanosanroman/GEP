@@ -27,11 +27,11 @@ public class Char_Phys : MonoBehaviour
     /// <summary>
     /// The attached Rigidbody
     /// </summary>
-    private Rigidbody m_RB;
+    protected Rigidbody m_RB;
 
-    public PlayerState m_PlayerState;
+    public AnimationState m_PlayerState;
     private Animator m_Animator;
-    private AnimationController m_PlayerAnimationController;
+    protected AnimationController m_PlayerAnimationController;
     private Char_Weapon_Controller m_Character_Weapon_Controller;
     private CapsuleCollider m_PlayerCollider;
     [SerializeField] private Character m_PlayerStats;
@@ -49,7 +49,7 @@ public class Char_Phys : MonoBehaviour
         //Gets the attached rigidbody component
         m_RB = GetComponent<Rigidbody>();
 
-        m_PlayerState = PlayerState.IDLE;
+        m_PlayerState = AnimationState.IDLE;
 
         m_Animator = GetComponent<Animator>();
 
@@ -103,19 +103,19 @@ public class Char_Phys : MonoBehaviour
 
                 if (m_Character_Weapon_Controller.m_EquipedWeapon == PickUpWeaponType.HAMMER)
                 {
-                    m_PlayerAnimationController.ChangeAnimationState(m_PlayerState = PlayerState.HAMMER_RUN);
+                    m_PlayerAnimationController.ChangeAnimationState(m_PlayerState = AnimationState.HAMMER_RUN);
                 }
                 else if (m_Character_Weapon_Controller.m_EquipedWeapon == PickUpWeaponType.SPEAR)
                 {
-                    m_PlayerAnimationController.ChangeAnimationState(m_PlayerState = PlayerState.SPEAR_RUN);
+                    m_PlayerAnimationController.ChangeAnimationState(m_PlayerState = AnimationState.SPEAR_RUN);
                 }
                 else if (m_Character_Weapon_Controller.m_EquipedWeapon == PickUpWeaponType.STAFF)
                 {
-                    m_PlayerAnimationController.ChangeAnimationState(m_PlayerState = PlayerState.STAFF_RUN);
+                    m_PlayerAnimationController.ChangeAnimationState(m_PlayerState = AnimationState.STAFF_RUN);
                 }
                 else
                 {
-                    m_PlayerAnimationController.ChangeAnimationState(m_PlayerState = PlayerState.RUN);
+                    m_PlayerAnimationController.ChangeAnimationState(m_PlayerState = AnimationState.RUN);
                 }
 
             }
@@ -146,9 +146,8 @@ public class Char_Phys : MonoBehaviour
         //Jumping syste
         if (IsGrounded() && GetJumpingInput())
         {
-            m_PlayerAnimationController.ChangeAnimationState(m_PlayerState = PlayerState.JUMP);
+            m_PlayerAnimationController.ChangeAnimationState(m_PlayerState = AnimationState.JUMP);
             m_RB.AddForce(Vector3.up * m_JumpForce, ForceMode.Impulse);
-            m_PlayerStats.m_CurrentHealth -= 3f;
         }
         else if (!IsGrounded())
         {
@@ -178,22 +177,22 @@ public class Char_Phys : MonoBehaviour
 
             if (m_Character_Weapon_Controller.m_EquipedWeapon == PickUpWeaponType.HAMMER)
             {
-                m_PlayerAnimationController.ChangeAnimationState(m_PlayerState = PlayerState.HAMMER_IDLE);
+                m_PlayerAnimationController.ChangeAnimationState(m_PlayerState = AnimationState.HAMMER_IDLE);
 
             }
             else if (m_Character_Weapon_Controller.m_EquipedWeapon == PickUpWeaponType.SPEAR)
             {
-                m_PlayerAnimationController.ChangeAnimationState(m_PlayerState = PlayerState.SPEAR_IDLE);
+                m_PlayerAnimationController.ChangeAnimationState(m_PlayerState = AnimationState.SPEAR_IDLE);
 
             }
             else if (m_Character_Weapon_Controller.m_EquipedWeapon == PickUpWeaponType.STAFF)
             {
-                m_PlayerAnimationController.ChangeAnimationState(m_PlayerState = PlayerState.STAFF_IDLE);
+                m_PlayerAnimationController.ChangeAnimationState(m_PlayerState = AnimationState.STAFF_IDLE);
 
             }
             else
             {
-                m_PlayerAnimationController.ChangeAnimationState(m_PlayerState = PlayerState.IDLE);
+                m_PlayerAnimationController.ChangeAnimationState(m_PlayerState = AnimationState.IDLE);
 
             }
         }
@@ -305,7 +304,7 @@ public class Char_Phys : MonoBehaviour
  
 
 
-public enum PlayerState
+public enum AnimationState
 {
     IDLE,
     HAMMER_IDLE,

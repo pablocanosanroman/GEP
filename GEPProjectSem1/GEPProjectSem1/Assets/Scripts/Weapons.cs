@@ -26,7 +26,6 @@ public class Weapons : MonoBehaviour
 
             if (m_Player.m_BulletActive == true)
             {
-                Debug.Log("true");
                 Debug.Log("NormalAttack dealt");
                 damageInterface.Damage(m_WeaponType.m_NormalAttack);
             }

@@ -16,14 +16,19 @@ public class AudioManager : MonoBehaviour
 
             sound.m_Source.volume = sound.m_Volume;
             sound.m_Source.pitch = sound.m_Pitch;
+            sound.m_Source.loop = sound.m_Loop;
         }
     }
+
+    private void Start()
+    {
+        Play("MainGameTheme");
+    }
+
     public void Play(string name)
     {
         foreach(Sound sound in m_Sounds)
         {
-            sound.m_ClipName = name;
-
             if(sound.m_ClipName == name)
             {
                 sound.m_Source.Play();
