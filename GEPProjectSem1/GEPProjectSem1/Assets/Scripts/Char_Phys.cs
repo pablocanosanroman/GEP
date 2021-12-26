@@ -256,6 +256,8 @@ public class Char_Phys : MonoBehaviour
         
     }
 
+    
+
     //Inputs
     public float GetHorizontalInput()
     {

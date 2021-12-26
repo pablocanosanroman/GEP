@@ -10,6 +10,7 @@ public class IntroUI : MonoBehaviour
     [SerializeField] private GameObject m_IntroCanvas;
     [SerializeField] private GameObject m_OptionsCanvas;
     [SerializeField] private GameObject m_ControlsCanvas;
+    [SerializeField] private GameObject m_CreditsCanvas;
     [SerializeField] private AudioMixer m_AudioMixer;
     [SerializeField] private Slider m_MusicSlider;
     [SerializeField] private Slider m_SFXSlider;
@@ -34,6 +35,7 @@ public class IntroUI : MonoBehaviour
         m_IntroCanvas.SetActive(false);
         m_OptionsCanvas.SetActive(true);
         m_ControlsCanvas.SetActive(false);
+        m_CreditsCanvas.SetActive(false);
     }
 
     public void GetControls()
@@ -41,6 +43,8 @@ public class IntroUI : MonoBehaviour
         m_IntroCanvas.SetActive(false);
         m_OptionsCanvas.SetActive(false);
         m_ControlsCanvas.SetActive(true);
+        m_CreditsCanvas.SetActive(false);
+
     }
 
     public void GetIntro()
@@ -48,6 +52,17 @@ public class IntroUI : MonoBehaviour
         m_IntroCanvas.SetActive(true);
         m_OptionsCanvas.SetActive(false);
         m_ControlsCanvas.SetActive(false);
+        m_CreditsCanvas.SetActive(false);
+
+    }
+
+    public void GetCredits()
+    {
+        m_IntroCanvas.SetActive(false);
+        m_OptionsCanvas.SetActive(false);
+        m_ControlsCanvas.SetActive(false);
+        m_CreditsCanvas.SetActive(true);
+
     }
 
     public void SetMusicVolume(float sliderValue)
