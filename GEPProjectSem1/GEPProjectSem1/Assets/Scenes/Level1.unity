@@ -289,7 +289,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: P A U S E !
+  m_Text: 'P A U S E '
 --- !u!222 &37462066
 CanvasRenderer:
   m_ObjectHideFlags: 0
