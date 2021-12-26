@@ -97,6 +97,7 @@ public class Char_Phys : MonoBehaviour
 
             //Add force to the rigidbody
             m_RB.AddForce(moveDir.normalized * m_Speed, ForceMode.Impulse);
+            
 
             if (m_RB.velocity.y == 0f && !m_IsAttacking)
             {
@@ -122,8 +123,8 @@ public class Char_Phys : MonoBehaviour
 
         }
         else
-        {
-
+       {
+            //Stops the floor from being slippery
             Vector3 lateralVel = Vector3.ProjectOnPlane(m_RB.velocity, Vector3.up);
             if (lateralVel.magnitude > 0.1f)
             {
@@ -148,8 +149,10 @@ public class Char_Phys : MonoBehaviour
         {
             m_PlayerAnimationController.ChangeAnimationState(m_PlayerState = AnimationState.JUMP);
             m_RB.AddForce(Vector3.up * m_JumpForce, ForceMode.Impulse);
+            m_SoundManager.Play("JumpSound");
         }
-        else if (!IsGrounded())
+        
+        if (!IsGrounded())
         {
             StartCoroutine(JumpForceDown());
         }
@@ -319,5 +322,5 @@ public enum AnimationState
     ATTACK_HAMMER,
     ATTACK_SPEAR,
     ATTACK_STAFF,
-    DEATH
+    DAMAGE_TAKEN
 }

@@ -14,8 +14,9 @@ public class AIEnemy : Char_Phys
     private float m_RangeOfAttack = 1.5f;
     private float m_EnemySpeed = 0.15f;
     private float m_EnemySpeedOnChase = 1f;
-    private bool m_AttackDone = false;
+    private bool m_CanAttack = false;
     private float m_MaxEnemySpeed = 0.8f;
+    private float m_StopingForce = 10f;
     [SerializeField] private GameObject m_DamageCollider;
 
 
@@ -41,6 +42,7 @@ public class AIEnemy : Char_Phys
         switch (m_State)
         {
             case AIState.WANDER:
+                m_CanAttack = false;
                 Wander();
                 if (FindTarget())
                 {
@@ -48,7 +50,8 @@ public class AIEnemy : Char_Phys
                 }
                 break;
             case AIState.CHASE:
-                if(!Chase() || m_Target.transform.position.y > 1.7f)
+                m_CanAttack = false;
+                if (!Chase() || m_Target.transform.position.y > 1.7f)
                 {
                     m_State = AIState.WANDER;
                 }
@@ -59,6 +62,20 @@ public class AIEnemy : Char_Phys
                 }
                 break;
             case AIState.ATTACK:
+
+                if (m_EnemyRB.velocity.magnitude > 0.1)
+                {
+                    //Stops the floor from being slippery
+                    Vector3 lateralVel = Vector3.ProjectOnPlane(m_EnemyRB.velocity, Vector3.up);
+                    if (lateralVel.magnitude > 0.1f)
+                    {
+
+                        m_EnemyRB.AddForce(-(lateralVel.normalized * m_StopingForce * Time.fixedDeltaTime), ForceMode.Impulse);
+
+                    }
+
+                }
+
                 Attack();
                 if((m_Target.transform.position - transform.position).magnitude > m_RangeOfAttack)
                 {
@@ -67,6 +84,8 @@ public class AIEnemy : Char_Phys
                 break;
 
         }
+
+        
 
         if (m_EnemyRB.velocity.magnitude > m_MaxEnemySpeed)
         {
@@ -150,8 +169,14 @@ public class AIEnemy : Char_Phys
 
     private void Attack()
     {
-        m_EnemyAnimator.SetTrigger("Attack");
-        
+        m_CanAttack = true;
+        if(m_CanAttack)
+        {
+            m_EnemyAnimator.SetBool("IsRunning", false);
+            m_EnemyAnimator.SetTrigger("Attack");
+        }
+
+        StartCoroutine(AttackDone());
     }
 
     private bool ShouldAttack()
@@ -178,7 +203,7 @@ public class AIEnemy : Char_Phys
     IEnumerator AttackDone()
     {
         yield return new WaitForSeconds(1.12f);
-        m_AttackDone = true;
+        m_CanAttack = false;
     }
 }
 
@@ -186,5 +211,5 @@ public enum AIState
 {
     WANDER,
     CHASE,
-    ATTACK
+    ATTACK,
 }

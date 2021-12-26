@@ -495,9 +495,6 @@ MonoBehaviour:
     m_Bits: 64
   m_ParticleSystemStaff: {fileID: 0}
   m_SoundManager: {fileID: 0}
-  m_PlayerLayerMask:
-    serializedVersion: 2
-    m_Bits: 256
   m_DamageCollider: {fileID: 1627206233220403339}
 --- !u!1 &7755499572139808560
 GameObject:
@@ -2207,7 +2204,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3818771183871882618, guid: 3df7eabffe3b26942a099c1aa1ef2ff1, type: 3}
       propertyPath: m_Layer
-      value: 8
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3818771183871882618, guid: 3df7eabffe3b26942a099c1aa1ef2ff1, type: 3}
       propertyPath: m_IsActive
@@ -2219,7 +2216,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4826020918785406894, guid: 3df7eabffe3b26942a099c1aa1ef2ff1, type: 3}
       propertyPath: m_Layer
-      value: 8
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4826020918785406894, guid: 3df7eabffe3b26942a099c1aa1ef2ff1, type: 3}
       propertyPath: m_IsActive
@@ -2271,7 +2268,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8659581033211615892, guid: 3df7eabffe3b26942a099c1aa1ef2ff1, type: 3}
       propertyPath: m_Layer
-      value: 8
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 8659581033211615892, guid: 3df7eabffe3b26942a099c1aa1ef2ff1, type: 3}
       propertyPath: m_IsActive

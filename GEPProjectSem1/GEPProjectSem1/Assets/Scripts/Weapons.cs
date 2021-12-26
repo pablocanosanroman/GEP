@@ -6,8 +6,11 @@ public class Weapons : MonoBehaviour
 {
     [SerializeField] private WeaponSO m_WeaponType;
     [SerializeField] private Char_Phys m_Player;
-    
-
+    private AudioManager m_SoundManager;
+    private void Awake()
+    {
+        m_SoundManager = GameObject.FindObjectOfType<AudioManager>();
+    }
     private void OnTriggerEnter(Collider other)
     {
         IDamagable damageInterface = other.GetComponent<IDamagable>();
@@ -16,17 +19,16 @@ public class Weapons : MonoBehaviour
             if(m_Player.m_SpecialAttack == true)
             {
                 damageInterface.Damage(m_WeaponType.m_SpecialAttack);
-                Debug.Log("SpecialAttack dealt");
+                m_SoundManager.Play("MeleeHitSound");
             }
             else
             {
-                Debug.Log("NormalAttack dealt");
+                m_SoundManager.Play("MeleeHitSound");
                 damageInterface.Damage(m_WeaponType.m_NormalAttack);
             }
 
             if (m_Player.m_BulletActive == true)
             {
-                Debug.Log("NormalAttack dealt");
                 damageInterface.Damage(m_WeaponType.m_NormalAttack);
             }
 
