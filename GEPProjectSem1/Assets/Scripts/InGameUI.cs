@@ -2,7 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;
+using UnityEngine.Audio;
+
 
 public class InGameUI : MonoBehaviour
 {
@@ -28,22 +29,44 @@ public class InGameUI : MonoBehaviour
     //Canvas
     [SerializeField] private GameObject m_InGameCanvas;
     [SerializeField] private GameObject m_WinCanvas;
+    [SerializeField] private GameObject m_PauseCanvas;
     //EnemyCount
     public Text m_EnemyCountText;
     private int m_CurrentEnemyCount;
+    //MusicSliders
+    [SerializeField] private AudioMixer m_AudioMixer;
+    [SerializeField] private Slider m_MusicSlider;
+    [SerializeField] private Slider m_SFXSlider;
+    private float m_MusicVolume;
+    private float m_SFXVolume;
+    //SensitivitySlider
+    [SerializeField] private Slider m_SensitivitySlider;
+    [SerializeField] private Camera_Chase m_CameraSensitivity;
+
+
 
     private void Start()
     {
         m_White = new Color(255, 255, 255, 255);
+        m_MusicVolume = PlayerPrefs.GetFloat("MusicVolumeValue");
+        m_SFXVolume = PlayerPrefs.GetFloat("SFXVolumeValue");
+        m_CameraSensitivity.m_CamSpeed = PlayerPrefs.GetFloat("SensitivityValue");
+        m_MusicSlider.value = m_MusicVolume;
+        m_SFXSlider.value = m_SFXVolume;
+        m_SensitivitySlider.value = m_CameraSensitivity.m_CamSpeed;
+        Time.timeScale = 1;
+        
     }
 
     private void Update()
     {
+        PauseGame();
         ImageSwitcher();
         SliderChange();
         Timer();
         GetPoints();
         EnemyCount();
+        
         
     }
 
@@ -56,7 +79,6 @@ public class InGameUI : MonoBehaviour
     {
         if (m_Time > 0)
         {
-            Time.timeScale = 1;
             m_Time -= Time.deltaTime;
         }
         else
@@ -64,6 +86,7 @@ public class InGameUI : MonoBehaviour
             m_Time = 0;
             Time.timeScale = 0;
             m_InGameCanvas.SetActive(false);
+            m_PauseCanvas.SetActive(false);
             m_WinCanvas.SetActive(true);
         }
 
@@ -117,6 +140,47 @@ public class InGameUI : MonoBehaviour
 
         m_EnemyCountText.text = m_CurrentEnemyCount.ToString() + " / " + m_TotalEnemies.ToString();
 
+    }
+
+    public void PauseGame()
+    {
+        if (m_Time > 0)
+        {
+            if (Input.GetKey(KeyCode.P))
+            {
+                Time.timeScale = 0;
+                m_PauseCanvas.SetActive(true);
+                m_InGameCanvas.SetActive(false);
+
+            }
+        }
+        
+    }
+
+    public void BackToGame()
+    {
+        m_PauseCanvas.SetActive(false);
+        m_InGameCanvas.SetActive(true);
+        Time.timeScale = 1;
+    }
+
+    public void SetMusicVolume(float sliderValue)
+    {
+        m_AudioMixer.SetFloat("MusicVolume", Mathf.Log10(sliderValue) * 20);
+        PlayerPrefs.SetFloat("MusicVolumeValue", sliderValue);
+    }
+
+    public void SetSFXVolume(float sliderValue)
+    {
+        m_AudioMixer.SetFloat("SFXVolume", Mathf.Log10(sliderValue) * 20);
+        PlayerPrefs.SetFloat("SFXVolumeValue", sliderValue);
+    }
+
+    public void SetSensitivity()
+    {
+
+        m_CameraSensitivity.m_CamSpeed = m_SensitivitySlider.value;
+        PlayerPrefs.SetFloat("SensitivityValue", m_CameraSensitivity.m_CamSpeed);
     }
 
     private void GetPoints()

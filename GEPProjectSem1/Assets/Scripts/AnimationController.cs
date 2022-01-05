@@ -5,7 +5,7 @@ using UnityEngine;
 public class AnimationController : MonoBehaviour
 {
     public Animator m_CharacterAnimator;
-    PlayerState m_currentAnimation;
+    AnimationState m_currentAnimation;
 
     private void Start()
     {
@@ -13,7 +13,7 @@ public class AnimationController : MonoBehaviour
 
     }
 
-    public void ChangeAnimationState(PlayerState newState)
+    public void ChangeAnimationState(AnimationState newState)
     {
         //stop the same animation from interrupting itself --Guard
         if(m_currentAnimation == newState) return;

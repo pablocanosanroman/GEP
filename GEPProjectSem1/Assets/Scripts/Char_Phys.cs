@@ -22,15 +22,16 @@ public class Char_Phys : MonoBehaviour
     public bool m_SpecialAttack = false;
     public bool m_BulletActive = false;
     
+    
 
     /// <summary>
     /// The attached Rigidbody
     /// </summary>
-    private Rigidbody m_RB;
+    protected Rigidbody m_RB;
 
-    public PlayerState m_PlayerState;
+    public AnimationState m_PlayerState;
     private Animator m_Animator;
-    private AnimationController m_PlayerAnimationController;
+    protected AnimationController m_PlayerAnimationController;
     private Char_Weapon_Controller m_Character_Weapon_Controller;
     private CapsuleCollider m_PlayerCollider;
     [SerializeField] private Character m_PlayerStats;
@@ -38,6 +39,8 @@ public class Char_Phys : MonoBehaviour
     [SerializeField] private AnimatorOverrideController m_PlayerAnimOverrideControllerDefault;
     [SerializeField] private LayerMask m_Ground;
     [SerializeField] private GameObject m_ParticleSystemStaff;
+    [SerializeField] private AudioManager m_SoundManager;
+    
     
     
 
@@ -46,7 +49,7 @@ public class Char_Phys : MonoBehaviour
         //Gets the attached rigidbody component
         m_RB = GetComponent<Rigidbody>();
 
-        m_PlayerState = PlayerState.IDLE;
+        m_PlayerState = AnimationState.IDLE;
 
         m_Animator = GetComponent<Animator>();
 
@@ -55,6 +58,8 @@ public class Char_Phys : MonoBehaviour
         m_Character_Weapon_Controller = GetComponent<Char_Weapon_Controller>();
 
         m_PlayerCollider = GetComponent<CapsuleCollider>();
+
+        
     }
 
     protected virtual void Update()
@@ -64,6 +69,7 @@ public class Char_Phys : MonoBehaviour
 
         //Attack animations
         AttackAnimations();
+        
     }
 
 
@@ -91,33 +97,34 @@ public class Char_Phys : MonoBehaviour
 
             //Add force to the rigidbody
             m_RB.AddForce(moveDir.normalized * m_Speed, ForceMode.Impulse);
+            
 
             if (m_RB.velocity.y == 0f && !m_IsAttacking)
             {
 
                 if (m_Character_Weapon_Controller.m_EquipedWeapon == PickUpWeaponType.HAMMER)
                 {
-                    m_PlayerAnimationController.ChangeAnimationState(m_PlayerState = PlayerState.HAMMER_RUN);
+                    m_PlayerAnimationController.ChangeAnimationState(m_PlayerState = AnimationState.HAMMER_RUN);
                 }
                 else if (m_Character_Weapon_Controller.m_EquipedWeapon == PickUpWeaponType.SPEAR)
                 {
-                    m_PlayerAnimationController.ChangeAnimationState(m_PlayerState = PlayerState.SPEAR_RUN);
+                    m_PlayerAnimationController.ChangeAnimationState(m_PlayerState = AnimationState.SPEAR_RUN);
                 }
                 else if (m_Character_Weapon_Controller.m_EquipedWeapon == PickUpWeaponType.STAFF)
                 {
-                    m_PlayerAnimationController.ChangeAnimationState(m_PlayerState = PlayerState.STAFF_RUN);
+                    m_PlayerAnimationController.ChangeAnimationState(m_PlayerState = AnimationState.STAFF_RUN);
                 }
                 else
                 {
-                    m_PlayerAnimationController.ChangeAnimationState(m_PlayerState = PlayerState.RUN);
+                    m_PlayerAnimationController.ChangeAnimationState(m_PlayerState = AnimationState.RUN);
                 }
 
             }
 
         }
         else
-        {
-
+       {
+            //Stops the floor from being slippery
             Vector3 lateralVel = Vector3.ProjectOnPlane(m_RB.velocity, Vector3.up);
             if (lateralVel.magnitude > 0.1f)
             {
@@ -140,11 +147,12 @@ public class Char_Phys : MonoBehaviour
         //Jumping syste
         if (IsGrounded() && GetJumpingInput())
         {
-            m_PlayerAnimationController.ChangeAnimationState(m_PlayerState = PlayerState.JUMP);
+            m_PlayerAnimationController.ChangeAnimationState(m_PlayerState = AnimationState.JUMP);
             m_RB.AddForce(Vector3.up * m_JumpForce, ForceMode.Impulse);
-            m_PlayerStats.m_CurrentHealth -= 3f;
+            m_SoundManager.Play("JumpSound");
         }
-        else if (!IsGrounded())
+        
+        if (!IsGrounded())
         {
             StartCoroutine(JumpForceDown());
         }
@@ -172,22 +180,22 @@ public class Char_Phys : MonoBehaviour
 
             if (m_Character_Weapon_Controller.m_EquipedWeapon == PickUpWeaponType.HAMMER)
             {
-                m_PlayerAnimationController.ChangeAnimationState(m_PlayerState = PlayerState.HAMMER_IDLE);
+                m_PlayerAnimationController.ChangeAnimationState(m_PlayerState = AnimationState.HAMMER_IDLE);
 
             }
             else if (m_Character_Weapon_Controller.m_EquipedWeapon == PickUpWeaponType.SPEAR)
             {
-                m_PlayerAnimationController.ChangeAnimationState(m_PlayerState = PlayerState.SPEAR_IDLE);
+                m_PlayerAnimationController.ChangeAnimationState(m_PlayerState = AnimationState.SPEAR_IDLE);
 
             }
             else if (m_Character_Weapon_Controller.m_EquipedWeapon == PickUpWeaponType.STAFF)
             {
-                m_PlayerAnimationController.ChangeAnimationState(m_PlayerState = PlayerState.STAFF_IDLE);
+                m_PlayerAnimationController.ChangeAnimationState(m_PlayerState = AnimationState.STAFF_IDLE);
 
             }
             else
             {
-                m_PlayerAnimationController.ChangeAnimationState(m_PlayerState = PlayerState.IDLE);
+                m_PlayerAnimationController.ChangeAnimationState(m_PlayerState = AnimationState.IDLE);
 
             }
         }
@@ -214,11 +222,14 @@ public class Char_Phys : MonoBehaviour
             }
             else if (m_Character_Weapon_Controller.m_EquipedWeapon == PickUpWeaponType.STAFF)
             {
+                
                 m_Animator.SetTrigger("Attack_Staff");
                 m_ParticleSystemStaff.SetActive(true);
                 m_BulletActive = true;
                 StartCoroutine(SetBulletActiveFalse());
                 StartCoroutine(HideParticleSystemStaff());
+                m_SoundManager.Play("MagicSpell");
+                
             }
         }
         else if(GetRightMouseButtonInput())
@@ -244,6 +255,8 @@ public class Char_Phys : MonoBehaviour
         }
         
     }
+
+    
 
     //Inputs
     public float GetHorizontalInput()
@@ -296,7 +309,7 @@ public class Char_Phys : MonoBehaviour
  
 
 
-public enum PlayerState
+public enum AnimationState
 {
     IDLE,
     HAMMER_IDLE,
@@ -311,5 +324,5 @@ public enum PlayerState
     ATTACK_HAMMER,
     ATTACK_SPEAR,
     ATTACK_STAFF,
-    DEATH
+    DAMAGE_TAKEN
 }
