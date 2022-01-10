@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Weapon: 4
   m_NormalAttack: 30
-  m_SpecialAttack: 10
+  m_SpecialAttack: 5

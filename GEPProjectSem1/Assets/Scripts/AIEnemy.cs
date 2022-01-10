@@ -5,60 +5,94 @@ using UnityEngine.AI;
 
 public class AIEnemy : Char_Phys
 {
+    private Char_Phys m_Target;
     private NavMeshPath m_CurrentPath;
     private Rigidbody m_EnemyRB;
+    private Animator m_EnemyAnimator;
     private AIState m_State;
-    private float m_SightRange = 3f;
-    private float m_EnemySpeed = 1f;
-    private bool m_PlayerInSight;
-    private bool m_WeaponPicked;
-    private float m_MaxSpeed = 3f;
-    [SerializeField] private LayerMask m_PlayerLayerMask;
+    private float m_SightRange = 5f;
+    private float m_RangeOfAttack = 1.5f;
+    private float m_EnemySpeed = 0.15f;
+    private float m_EnemySpeedOnChase = 1f;
+    private bool m_CanAttack = false;
+    private float m_MaxEnemySpeed = 0.8f;
+    private float m_EnemyStopingForce = 10f;
+    [SerializeField] private GameObject m_DamageCollider;
+
 
     private void Awake()
     {
+        m_EnemyAnimator = GetComponent<Animator>();
         m_State = AIState.WANDER;
         m_EnemyRB = GetComponent<Rigidbody>();
         m_CurrentPath = new NavMeshPath();
-        
+        m_RB = GameObject.FindGameObjectWithTag("Player").GetComponent<Rigidbody>();
+         
+
     }
 
     protected override void Update()
     {
-        
-        
+
     }
 
     protected override void FixedUpdate()
     {
+       
         switch (m_State)
         {
             case AIState.WANDER:
+                m_CanAttack = false;
                 Wander();
-                //if (FindTarget())
-                //{
-                //    m_State = AIState.PICK_WEAPON;
-                //}
-                break;
-            case AIState.PICK_WEAPON:
-                if (m_WeaponPicked)
+                if (FindTarget())
                 {
                     m_State = AIState.CHASE;
                 }
                 break;
             case AIState.CHASE:
-                Chase();
+                m_CanAttack = false;
+                if (!Chase() || m_Target.transform.position.y > 1.7f)
+                {
+                    m_State = AIState.WANDER;
+                }
 
+                if(ShouldAttack())
+                {
+                    m_State = AIState.ATTACK;
+                }
                 break;
             case AIState.ATTACK:
+
+                if (m_EnemyRB.velocity.magnitude > 0.1)
+                {
+                    //Stops the floor from being slippery
+                    Vector3 lateralVel = Vector3.ProjectOnPlane(m_EnemyRB.velocity, Vector3.up);
+                    if (lateralVel.magnitude > 0.1f)
+                    {
+
+                        m_EnemyRB.AddForce(-(lateralVel.normalized * m_EnemyStopingForce * Time.fixedDeltaTime), ForceMode.Impulse);
+
+                    }
+
+                }
+
+                Attack();
+                if((m_Target.transform.position - transform.position).magnitude > m_RangeOfAttack)
+                {
+                    m_State = AIState.CHASE;
+                }
                 break;
 
         }
 
-        if (m_EnemyRB.velocity.magnitude > m_MaxSpeed)
+        
+
+        if (m_EnemyRB.velocity.magnitude > m_MaxEnemySpeed)
         {
-            m_EnemyRB.velocity = m_EnemyRB.velocity.normalized * m_MaxSpeed;
+            m_EnemyRB.velocity = m_EnemyRB.velocity.normalized * m_MaxEnemySpeed;
         }
+
+        m_EnemyAnimator.SetFloat("RunSpeed", m_EnemyRB.velocity.magnitude / m_MaxEnemySpeed);
     }
 
     private void Wander()
@@ -69,14 +103,17 @@ public class AIEnemy : Char_Phys
         }
 
         Vector3 currentDestination = m_CurrentPath.corners[m_CurrentPath.corners.Length - 1];
+        
 
-        if ((currentDestination - transform.position).magnitude < 0.001f)
+        if ((currentDestination - transform.position).magnitude < 0.5f)
         {
-           currentDestination = NewWanderPoint();
+            currentDestination = NewWanderPoint();
+            m_EnemyAnimator.SetBool("IsRunning", false);
         }
         NavMesh.CalculatePath(transform.position, currentDestination, NavMesh.AllAreas, m_CurrentPath);
+        
 
-        if(m_CurrentPath.corners.Length < 2)
+        if (m_CurrentPath.corners.Length < 2)
         {
             NavMesh.FindClosestEdge(currentDestination, out NavMeshHit _hit, NavMesh.AllAreas);
             currentDestination = _hit.position;
@@ -84,28 +121,72 @@ public class AIEnemy : Char_Phys
         }
         Vector3 toNextPoint = m_CurrentPath.corners[1] - transform.position;
         m_EnemyRB.AddForce(toNextPoint * m_EnemySpeed, ForceMode.Impulse);
+        transform.rotation = Quaternion.LookRotation(toNextPoint);
+        m_EnemyAnimator.SetBool("IsRunning", true);
 
-        
     }
 
-    //private bool FindTarget()
-    //{
-    //    //m_PlayerInSight = Physics.CheckSphere(transform.position, m_SightRange, m_PlayerLayerMask);
-    //    //return m_PlayerInSight;
-    //}
-
-    private void Chase()
+    private bool FindTarget()
     {
+        GameObject possibleTarget = GameObject.FindGameObjectWithTag("Player");
+        Char_Phys possibleTargetPlayer = possibleTarget.GetComponent<Char_Phys>();
+
+        if(possibleTargetPlayer != null)
+        {
+            float tempDist = (possibleTarget.transform.position - transform.position).magnitude;
+            if(tempDist < m_SightRange)
+            {
+                m_SightRange = tempDist;
+                m_Target = possibleTargetPlayer;
+                
+            }
+           
+        }
+        return (m_Target != null);
     }
 
-    private void PickWeapon()
+    private bool Chase()
     {
-
+        if(m_Target != null)
+        {
+            Vector3 toTarget = m_Target.transform.position - transform.position;
+            Vector3 PathToFollow = new Vector3(toTarget.x, 0, toTarget.z);
+            if (toTarget.magnitude - m_SightRange <= m_RB.velocity.magnitude)
+            {
+                m_EnemyRB.AddForce(PathToFollow * m_EnemySpeedOnChase, ForceMode.Impulse);
+                transform.rotation = Quaternion.LookRotation(PathToFollow);
+                m_PlayerState = AnimationState.RUN;
+                m_EnemyAnimator.SetBool("IsRunning", true);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        return false;
     }
 
     private void Attack()
     {
+        m_CanAttack = true;
+        if(m_CanAttack)
+        {
+            m_EnemyAnimator.SetBool("IsRunning", false);
+            m_EnemyAnimator.SetTrigger("Attack");
+        }
 
+        StartCoroutine(AttackDone());
+    }
+
+    private bool ShouldAttack()
+    {
+        if(m_Target)
+        {
+            Vector3 targetDirection = m_Target.transform.position - transform.position;
+            return (targetDirection.magnitude < m_RangeOfAttack);
+        }
+        return false;
     }
 
     private Vector3 NewWanderPoint()
@@ -114,12 +195,21 @@ public class AIEnemy : Char_Phys
         return _hit.position;
     }
 
+    public void SetDamageTriggerActive(int active)
+    {
+        m_DamageCollider.gameObject.SetActive((active == 1) ? true : false);
+    }
+
+    IEnumerator AttackDone()
+    {
+        yield return new WaitForSeconds(1.12f);
+        m_CanAttack = false;
+    }
 }
 
 public enum AIState
 {
     WANDER,
-    PICK_WEAPON,
     CHASE,
-    ATTACK
+    ATTACK,
 }

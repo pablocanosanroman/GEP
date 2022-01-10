@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: Mace
   m_EditorClassIdentifier: 
   m_Weapon: 2
-  m_NormalAttack: 5
-  m_SpecialAttack: 12
+  m_NormalAttack: 4
+  m_SpecialAttack: 8

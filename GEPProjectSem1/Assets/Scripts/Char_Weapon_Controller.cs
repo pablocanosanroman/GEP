@@ -12,6 +12,7 @@ public class Char_Weapon_Controller : MonoBehaviour
     public GameObject m_Staff;
     public GameObject m_StaffShotPrefab;
     private float m_FiringForce = 15f;
+   
 
 
     private void Start()
@@ -29,6 +30,8 @@ public class Char_Weapon_Controller : MonoBehaviour
         {
             if(m_InteractObject != null)
             {
+                FindObjectOfType<AudioManager>().Play("PickUpSound");
+
                 if (EquipWeapon(m_InteractObject.m_WeaponType))
                 {
                     Destroy(m_InteractObject.gameObject);
